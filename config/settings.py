@@ -126,4 +126,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # custom authentication override
-AUTH_USER_MODEL = "user.NetworkSystems"
+AUTH_USER_MODEL = "tracker.NetworkSystems"

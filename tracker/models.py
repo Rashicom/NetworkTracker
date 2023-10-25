@@ -43,7 +43,7 @@ class NetworkSystems(AbstractUser):
     first_name = None
 
     # extra fields
-    system_username = models.CharField(unique=True)
+    system_username = models.CharField(unique=True, max_length=50)
 
 
     USERNAME_FIELD = "system_username"
@@ -53,12 +53,12 @@ class NetworkSystems(AbstractUser):
 
 
 # system general information table
-class SystemPerformanceHistory(models.Model):
-    network_system = models.ForeignKey(NetworkSystems, on_delete=models.CASCADE)
-    prosessor_usage = models.CharField()
-    memmory_usage = models.CharField()
-    hdd_usage = models.CharField()
-    time_stamp = models.DateTimeField(auto_now=False)
+# class SystemPerformanceHistory(models.Model):
+#     network_system = models.ForeignKey(NetworkSystems, on_delete=models.CASCADE)
+#     prosessor_usage = models.CharField()
+#     memmory_usage = models.CharField()
+#     hdd_usage = models.CharField()
+#     time_stamp = models.DateTimeField(auto_now=False)
 
 
 # all packages which is installed in the system
