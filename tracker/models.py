@@ -4,25 +4,25 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 # overriding usermanager
 class CustomUserManager(BaseUserManager):
 
-    # overriding user based authentication methord to email base authentiction
-    def _create_user(self, system_id, password, **extra_fields):
+    # overriding user based authentication methord to system_usermane base authentiction
+    def _create_user(self, system_username, password, **extra_fields):
 
-        if not system_id:
+        if not system_username:
             raise ValueError("The given mail must be set")
-        system_id = self.normalize_email(system_id)
-        user = self.model(system_id=system_id, **extra_fields)
+        system_username = self.normalize_email(system_username)
+        user = self.model(system_username=system_username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
 
-    def create_user(self, system_id, password=None, **extra_fields):
+    def create_user(self, system_username, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
-        return self._create_user(system_id, password, **extra_fields)
+        return self._create_user(system_username, password, **extra_fields)
 
 
-    def create_superuser(self, system_id, password=None, **extra_fields):
+    def create_superuser(self, system_username, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -31,45 +31,46 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self._create_user(system_id, password, **extra_fields)
+        return self._create_user(system_username, password, **extra_fields)
 
 
-# custom customer for user 
-# extrafields are added to by inheriting the django user
+# extrafields are added by inheriting the django default user
 class NetworkSystems(AbstractUser):
 
     # field doesnot needed
     username = None
-    first_name = None
     last_name = None
+    first_name = None
 
     # extra fields
-    system_id = models.CharField(unique=True)
-    
-    USERNAME_FIELD = "system_id"
+    system_username = models.CharField(unique=True)
+
+
+    USERNAME_FIELD = "system_username"
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
 
 # system general information table
-class SystemPerformance(models.Model):
+class SystemPerformanceHistory(models.Model):
     network_system = models.ForeignKey(NetworkSystems, on_delete=models.CASCADE)
     prosessor_usage = models.CharField()
     memmory_usage = models.CharField()
     hdd_usage = models.CharField()
+    time_stamp = models.DateTimeField(auto_now=False)
 
 
-# all pachages which is installed in the system
-class SystemPackages(models.Model):
+# all packages which is installed in the system
+class SystemProcesses(models.Model):
     network_system = models.ForeignKey(NetworkSystems, on_delete=models.CASCADE)
-    package_name = models.CharField(max_length=50)
-    # other_info
-    installed_time_stamp = models.DateTimeField(auto_now=True)
+    process_name = models.CharField(max_length=50)
+    
 
-
-class PackageUsageHistory(models.Model):
-    system_package = models.ForeignKey(SystemPackages, on_delete=models.CASCADE)
-    # other package fields
+# process history
+class ProcessHistory(models.Model):
+    system_package = models.ForeignKey(SystemProcesses, on_delete=models.CASCADE)
+    memory_percent = models.FloatField()
+    memory_usage = models.FloatField()
     time_stamp = models.DateTimeField(auto_now=False)
     is_running = models.BooleanField(default=False)
