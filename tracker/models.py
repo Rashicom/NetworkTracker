@@ -52,14 +52,6 @@ class NetworkSystems(AbstractUser):
     objects = CustomUserManager()
 
 
-# system general information table
-# class SystemPerformanceHistory(models.Model):
-#     network_system = models.ForeignKey(NetworkSystems, on_delete=models.CASCADE)
-#     prosessor_usage = models.CharField()
-#     memmory_usage = models.CharField()
-#     hdd_usage = models.CharField()
-#     time_stamp = models.DateTimeField(auto_now=False)
-
 
 # all packages which is installed in the system
 class SystemProcesses(models.Model):

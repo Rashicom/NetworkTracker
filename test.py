@@ -3,8 +3,9 @@ import schedule
 import time
 import requests
 import json
-import subprocess
 import os
+import asyncio
+import websockets
 
 
 def fetch_process():
@@ -33,7 +34,7 @@ def fetch_process():
             })
     return system_info
 
-def sed_data():
+async def send_data():
     """
     collect all the datas to send and make a post request to the server
     """
@@ -42,28 +43,11 @@ def sed_data():
     data = {"username":username, "system_info":system_info}
 
     # url to send the data
-    url = 'http://127.0.0.1:8000/'
-    headers = {'Content-Type': 'application/json'}
+    url = 'ws://127.0.0.1:8000/ws/add/'
+    async with websockets.connect(url) as websocket:
+        while True:
+            await websocket.send(json.dumps(data))
+            await asyncio.sleep(5)
 
-    try:
-        response = requests.post(url, data=json.dumps(data), headers=headers)
-        if response.status_code == 201:
-            print("success")
-        else:
-            print("Failed")
-            
-    except Exception as e:
-        print(e)
-        print("somthing went wrong")
-
-    
-
-# scheduled to send the data in every 1 minut
-schedule.every(1).minutes.do(fetch_process)
-
-# check the pendings in scheduler in evry one second 
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
-
-        
+if __name__ == '__main__':
+    asyncio.get_event_loop().run_until_complete(send_data())
