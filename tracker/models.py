@@ -64,5 +64,8 @@ class ProcessHistory(models.Model):
     system_package = models.ForeignKey(SystemProcesses, on_delete=models.CASCADE)
     memory_percent = models.FloatField()
     memory_usage = models.FloatField()
-    time_stamp = models.DateTimeField(auto_now=False)
-    is_running = models.BooleanField(default=False)
+    time_stamp = models.DateTimeField(auto_now=True)
+
+    # default sorting
+    class Meta:
+        ordering = ['time_stamp']
